@@ -94,6 +94,10 @@ Ko-fi: [https://ko-fi.com](https://ko-fi.com/alwizba)
 
 BTC: `bc1q0ay7shy6zyy3xduf9hgsgu5crfzvpes93d48a6`
 
+## Version
+
+CLI Version: [Click](https://github.com/unitybundleextractor)
+
 ## Credit
 
 Thanks for using this script!
