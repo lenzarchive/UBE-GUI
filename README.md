@@ -96,7 +96,7 @@ BTC: `bc1q0ay7shy6zyy3xduf9hgsgu5crfzvpes93d48a6`
 
 ## Version
 
-CLI Version: [Click](https://github.com/unitybundleextractor)
+CLI Version: [Click](https://github.com/lenzarchive/unitybundleextractor)
 
 ## Credit
 
