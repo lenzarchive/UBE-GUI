@@ -1,0 +1,21 @@
+# UnityBundleExtractor Web Interface Dependencies
+# Author: lenzarchive (https://github.com/lenzarchive)
+# License: MIT License
+
+# Core Unity bundle processing
+UnityPy>=1.10.0
+
+# Web framework
+Flask>=2.3.0
+Werkzeug>=2.3.0
+
+# Compression libraries (DO NOT MODIFY - Critical for bundle processing)
+lz4>=4.3.0
+
+# Image processing
+Pillow>=9.5.0
+
+# Progress tracking
+# tqdm is usually for CLI progress bars, not typically needed in web backend for user-facing progress.
+# However, if it's used internally by UnityPy or other libraries, keep it.
+tqdm>=4.65.0

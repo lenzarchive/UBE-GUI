@@ -1,0 +1,61 @@
+# UnityBundleExtractor - Docker Compose Configuration
+# Author: lenzarchive (https://github.com/lenzarchive)
+# License: MIT License
+
+version: '3.8'
+
+services:
+  unity-extractor:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=your-secret-key-change-this-in-production
+      - MAX_CONTENT_LENGTH=524288000
+      - FILE_RETENTION_HOURS=24
+      - CLEANUP_INTERVAL=3600
+      - LOG_LEVEL=INFO
+      - WORKER_TIMEOUT=300
+      - MAX_WORKERS=4 # Number of Gunicorn workers (processes)
+      - WEB_CONCURRENCY=2 # Number of internal worker threads for queue processing
+    volumes:
+      - uploads_data:/app/uploads
+      - extractions_data:/app/extractions
+      - logs_data:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+volumes:
+  uploads_data:
+    driver: local
+  extractions_data:
+    driver: local
+  logs_data:
+    driver: local
+
+# Optional: Production deployment with nginx (uncomment and configure if needed)
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - unity-extractor
+  #   restart: unless-stopped

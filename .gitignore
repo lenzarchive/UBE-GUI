@@ -1,0 +1,55 @@
+# UnityBundleExtractor .gitignore
+# Author: lenzarchive (https://github.com/lenzarchive)
+# License: MIT License
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python/
+env/
+venv/
+*.env
+.venv/
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+.cache
+.mypy_cache/
+.dmypy.json
+.pytest_cache/
+htmlcov/
+.nox/
+
+# IDEs and other local files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.flaskenv
+
+# Application-specific generated files and directories
+# These are created at runtime and should not be versioned
+uploads/
+extractions/
+logs/
+*.log
+logs/sessions/
+*.zip # Generated extraction archives
