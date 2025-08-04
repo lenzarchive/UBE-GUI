@@ -27,9 +27,10 @@
                     
                     <div id="optional-upload-section" class="upload-section card" style="display: none; margin-top: 1rem; padding: 1rem;">
                         <h3>Optional: Additional Resource Files</h3>
-                        <div id="optional-upload-area" class="custom-file-upload-label custom-file-upload-label-small">
+                        <label for="optional-file-input" id="optional-upload-area" class="custom-file-upload-label custom-file-upload-label-small">
                             <span id="optional-file-upload-text">Drag & Drop any .resS or other related files here (optional)</span>
-                            <input type="file" id="optional-file-input" name="optional_files" accept=".*" multiple>
+                        </label>
+                        <input type="file" id="optional-file-input" name="optional_files" accept=".*" multiple>
                         </div>
                         <ul id="additional-files-list"></ul>
                     </div>
