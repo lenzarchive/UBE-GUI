@@ -20,7 +20,7 @@ This tool is provided for **educational and research purposes only**. It is inte
 
 ## Requirements
 
-To run this application, you need Python 3.7+ and Docker (for containerized deployment). The following Python libraries are required:
+To run this application, you need Python 3.9+ and Docker (for containerized deployment). The following Python libraries are required:
 
 * UnityPy>=1.10.0
 * Flask>=2.3.0
