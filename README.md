@@ -39,8 +39,8 @@ pip install -r requirements.txt
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/lenzarchive/UnityBundleExtractor-Web.git
-    cd UnityBundleExtractor-Web
+    git clone https://github.com/lenzarchive/UBE-GUI.git
+    cd UBE-GUI
     ```
 
 2.  **Install dependencies**:
@@ -93,6 +93,10 @@ Saweria: [https://saweria.co](https://saweria.co/alwizba)
 Ko-fi: [https://ko-fi.com](https://ko-fi.com/alwizba)
 
 BTC: `bc1q0ay7shy6zyy3xduf9hgsgu5crfzvpes93d48a6`
+
+## Version
+
+CLI Version: [Click](https://github.com/lenzarchive/unitybundleextractor)
 
 ## Credit
 
