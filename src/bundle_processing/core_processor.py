@@ -33,7 +33,7 @@ class BundleProcessor:
     from initial analysis to asset extraction and temporary file cleanup.
     It orchestrates operations by calling specialized functions from other modules.
     """
-    def __init__(self, session_id: str, bundle_path: str, original_filename: str, session_upload_dir: str, app_config: Dict):
+    def __init__(self, session_id: str, bundle_path: str, original_filename: str, session_upload_dir: str, app_config: Dict, send_log: bool = True, allow_retention: bool = True):
         """
         Initializes a new BundleProcessor session.
 
@@ -43,6 +43,8 @@ class BundleProcessor:
             original_filename (str): The original filename of the uploaded bundle.
             session_upload_dir (str): The directory where all session-related uploaded files are stored.
             app_config (Dict): The application's configuration dictionary.
+            send_log (bool): Flag indicating whether to send error logs.
+            allow_retention (bool): Flag indicating whether to retain files after download.
         """
         self.session_id = session_id
         self.bundle_path = bundle_path
@@ -56,9 +58,18 @@ class BundleProcessor:
         self.error_message = None
         self.progress = 0
         self.app_config = app_config
-        self._is_cancelled = False # Flag to indicate if the task has been requested to be cancelled
-        
-        self.logger = setup_session_logger(session_id, app_config['SESSION_LOGS_DIR'], app_config['SESSION_LOG_LEVEL'])
+        self._is_cancelled = False
+        self.send_log = send_log
+        self.allow_retention = allow_retention
+
+        if self.send_log:
+            self.logger = setup_session_logger(session_id, app_config['SESSION_LOGS_DIR'], app_config['SESSION_LOG_LEVEL'])
+        else:
+            # Use a null logger that does nothing to prevent creating log files/folders
+            self.logger = logging.getLogger(f"session.{self.session_id}.null")
+            self.logger.addHandler(logging.NullHandler())
+            self.logger.propagate = False
+
         self.export_stats = {'success': 0, 'failed': 0, 'skipped': 0}
 
     def _check_cancellation(self):
@@ -183,31 +194,45 @@ class BundleProcessor:
             self.logger.error(f"Extraction failed for session {self.session_id}: {e}", exc_info=True)
             self.cleanup()
             raise
+        finally:
+            # Always clean up the temporary extraction directory after zipping or on error
+            if self.output_dir and os.path.exists(self.output_dir):
+                shutil.rmtree(self.output_dir, ignore_errors=True)
+                self.logger.debug(f"Removed temporary output directory: {self.output_dir}")
 
     def cleanup(self):
         """
         Removes all temporary files and directories associated with this session.
         This includes uploaded files, extracted output, and session-specific logs.
         """
-        self.logger.info(f"Initiating cleanup for session {self.session_id}.")
+        # Use the global logger for cleanup, as the session logger might be part of what's being deleted.
+        global_logger = logging.getLogger(__name__)
+        global_logger.info(f"Initiating full cleanup for session {self.session_id}.")
         try:
-            if self.session_upload_dir and os.path.exists(self.session_upload_dir):
-                shutil.rmtree(self.session_upload_dir, ignore_errors=True)
-                self.logger.debug(f"Removed upload directory: {self.session_upload_dir}")
-            
-            if self.output_dir and os.path.exists(self.output_dir):
-                shutil.rmtree(self.output_dir, ignore_errors=True)
-                self.logger.debug(f"Removed output directory: {self.output_dir}")
-            
-            # Close and remove session logger handlers to release file locks
+            # 1. Remove the session's upload directory
+            session_upload_dir = os.path.join(self.app_config['UPLOAD_FOLDER'], self.session_id)
+            if os.path.exists(session_upload_dir):
+                shutil.rmtree(session_upload_dir, ignore_errors=True)
+                global_logger.debug(f"Removed upload directory: {session_upload_dir}")
+
+            # 2. Remove the final ZIP archive directory for the session
+            session_zip_dir = os.path.join(self.app_config['OUTPUT_FOLDER'], self.session_id)
+            if os.path.exists(session_zip_dir):
+                shutil.rmtree(session_zip_dir, ignore_errors=True)
+                global_logger.debug(f"Removed session ZIP directory: {session_zip_dir}")
+
+            # 3. Close and remove session logger handlers to release file locks
             for handler in self.logger.handlers[:]:
                 handler.close()
                 self.logger.removeHandler(handler)
 
-            if os.path.exists(os.path.join(self.app_config['SESSION_LOGS_DIR'], self.session_id)):
-                shutil.rmtree(os.path.join(self.app_config['SESSION_LOGS_DIR'], self.session_id), ignore_errors=True)
-                self.logger.debug(f"Removed session log directory: {self.session_id}")
+            # 4. Remove the session's log directory (if logging was enabled)
+            if self.send_log:
+                log_dir_path = os.path.join(self.app_config['SESSION_LOGS_DIR'], self.session_id)
+                if os.path.exists(log_dir_path):
+                    shutil.rmtree(log_dir_path, ignore_errors=True)
+                    global_logger.debug(f"Removed session log directory: {log_dir_path}")
 
-            self.logger.info(f"Cleanup completed for session {self.session_id}.")
+            global_logger.info(f"Cleanup completed for session {self.session_id}.")
         except Exception as e:
-            logging.getLogger(__name__).warning(f"Cleanup warning for session {self.session_id}: {e}", exc_info=True)
+            global_logger.warning(f"Cleanup warning for session {self.session_id}: {e}", exc_info=True)

@@ -367,7 +367,7 @@ class UnityBundleExtractor {
      * Configures the toggle and copy functionality for the BTC address display.
      */
     initializeBTCAddressToggle() {
-        const btcAddress = "bc1qph900crzat0t8n2p69hd50j5mc9c82a2f5cmgd"; 
+        const btcAddress = "bc1q0ay7shy6zyy3xduf9hgsgu5crfzvpes93d48a6"; 
         const btcLink = this.elements.btcLink;
         const btcAddressSpan = this.elements.btcAddress;
 
@@ -1034,14 +1034,6 @@ class UnityBundleExtractor {
             this.showStatusMessage(errorMessage, 'error');
             this.displayErrorCard(errorMessage);
             console.error('handleAssetExtraction: No assets selected, returning.');
-            return;
-        }
-        const allowStorageCheckbox = this.elements.allowStorageCheckbox;
-        if (!allowStorageCheckbox || !allowStorageCheckbox.checked) {
-            const errorMessage = 'Server storage must be allowed for extraction.';
-            this.showStatusMessage(errorMessage, 'error');
-            this.displayErrorCard(errorMessage);
-            console.error('handleAssetExtraction: Server storage not allowed, returning.');
             return;
         }
         

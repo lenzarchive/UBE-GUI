@@ -27,10 +27,10 @@
                     
                     <div id="optional-upload-section" class="upload-section card" style="display: none; margin-top: 1rem; padding: 1rem;">
                         <h3>Optional: Additional Resource Files</h3>
-                        <div id="optional-upload-area" class="custom-file-upload-label custom-file-upload-label-small">
+                        <label for="optional-file-input" id="optional-upload-area" class="custom-file-upload-label custom-file-upload-label-small">
                             <span id="optional-file-upload-text">Drag & Drop any .resS or other related files here (optional)</span>
-                            <input type="file" id="optional-file-input" name="optional_files" accept=".*" multiple>
-                        </div>
+                        </label>
+                        <input type="file" id="optional-file-input" name="optional_files" accept=".*" multiple>
                         <ul id="additional-files-list"></ul>
                     </div>
 
@@ -42,7 +42,7 @@
                         </label>
                         <label>
                             <input type="checkbox" id="allow-storage-checkbox" name="allow_storage" value="true">
-                            Allow server to keep my file for debug purposes (required for extraction)
+                            Allow server to keep my file for debug purposes (helps development)
                         </label>
                     </div>
                     <button type="submit" id="upload-button">Analyze Bundle</button>
@@ -101,8 +101,8 @@
                         <strong>Support the Project</strong>
                         <div class="donation-links">
                             <a href="#" id="btc-link">BTC</a> |
-                            <a href="https://ko-fi.com/lenzarchive" target="_blank">Ko-fi</a> |
-                            <a href="https://saweria.co/lenzarchive" target="_blank">Saweria</a>
+                            <a href="https://ko-fi.com/alwizba" target="_blank">Ko-fi</a> |
+                            <a href="https://saweria.co/alwizba" target="_blank">Saweria</a>
                         </div>
                         <span id="btc-address" style="display: none;">Click address to copy</span>
                     </div>
@@ -110,14 +110,14 @@
                         <strong>Find Me On</strong>
                         <div class="social-links">
                             <a href="https://github.com/lenzarchive" target="_blank">GitHub</a> |
-                            <a href="https://tiktok.com/@yourprofile" target="_blank">TikTok</a> |
-                            <a href="https://youtube.com/@yourprofile" target="_blank">YouTube</a> |
-                            <a href="https://facebook.com/yourprofile" target="_blank">Facebook</a>
+                            <a href="https://tiktok.com/@alwizba" target="_blank">TikTok</a> |
+                            <a href="https://youtube.com/@alenforce" target="_blank">YouTube</a> |
+                            <a href="https://facebook.com/alwizba" target="_blank">Facebook</a>
                         </div>
                     </div>
                     <div class="footer-column">
                         <strong>Resources</strong>
-                        <a href="https://github.com/lenzarchive/UnityBundleExtractor-Web" target="_blank">Source Code</a>
+                        <a href="https://github.com/lenzarchive/ube-gui" target="_blank">Source Code</a>
                     </div>
                 </div>
                 <p class="disclaimer"><strong>Disclaimer:</strong> This tool is for educational and research purposes only. Ensure you have legal permission before extracting assets from any Unity project.</p>

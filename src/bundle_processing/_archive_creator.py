@@ -16,12 +16,13 @@ from src.utils import sanitize_filename
 def create_archive(source_dir: str, original_bundle_name: str, output_folder: str, session_id: str, local_logger: logging.Logger) -> str:
     """
     Creates a ZIP archive from the contents of a source directory.
-    The ZIP file is named based on the original bundle file, with a fallback to session ID.
+    The ZIP file is named based on the original bundle file and saved
+    within a session-specific subdirectory.
 
     Args:
         source_dir (str): The directory containing files to be zipped.
         original_bundle_name (str): The original filename of the uploaded bundle, used for naming the ZIP.
-        output_folder (str): The base directory where the ZIP archive will be saved.
+        output_folder (str): The base directory where the session's ZIP archive will be saved.
         session_id (str): The unique identifier for the current session.
         local_logger (logging.Logger): The logger instance for recording messages.
 
@@ -36,7 +37,12 @@ def create_archive(source_dir: str, original_bundle_name: str, output_folder: st
     else:
          zip_filename = f"unity_assets_{session_id}.zip"
 
-    zip_path = os.path.join(output_folder, zip_filename)
+    # Create a session-specific directory inside the main output folder
+    session_output_dir = os.path.join(output_folder, session_id)
+    os.makedirs(session_output_dir, exist_ok=True)
+    
+    # Define the final path for the ZIP file inside the session directory
+    zip_path = os.path.join(session_output_dir, zip_filename)
     
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for root, _, files in os.walk(source_dir):

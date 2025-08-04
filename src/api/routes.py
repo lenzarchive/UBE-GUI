@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 import time
 from typing import Tuple
 
-from flask import Blueprint, request, jsonify, send_file, current_app, render_template
+from flask import Blueprint, request, jsonify, send_file, current_app, render_template, after_this_request
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 
@@ -148,8 +148,11 @@ def upload_bundle():
             logger.error("Upload failed: No main Unity bundle/asset file found among selected files.")
             raise ValueError("No main Unity bundle/asset file (.bundle, .unity3d, .assets, .unitybundle, .assetbundle) was found in the upload.")
 
+        send_log = request.form.get('send_log') == 'true'
+        allow_retention = request.form.get('allow_storage') == 'true'
+
         # Create a BundleProcessor instance and set its initial status to 'queued'
-        processor = BundleProcessor(session_id, primary_file['path'], primary_file['name'], session_upload_dir, current_app.config)
+        processor = BundleProcessor(session_id, primary_file['path'], primary_file['name'], session_upload_dir, current_app.config, send_log, allow_retention)
         processor.processing_status = "queued"
         
         # Add the processor instance to the global session manager
@@ -309,6 +312,7 @@ def download_assets(session_id: str):
     """
     Serves the final ZIP archive containing the extracted assets for download.
     This endpoint is called once extraction is complete and download_ready is True.
+    It also triggers cleanup if file retention is not allowed.
 
     Args:
         session_id (str): The ID of the session for which to download the ZIP.
@@ -327,6 +331,18 @@ def download_assets(session_id: str):
         logger.error(f"Download file not found at {zip_path} for session {session_id}. May have been cleaned up prematurely.")
         return jsonify({'error': 'File not found, may have been cleaned up'}), 404
     
+    processor = session_data.get('processor')
+    if processor and not processor.allow_retention:
+        @after_this_request
+        def cleanup_session(response):
+            try:
+                logger.info(f"Triggering immediate cleanup for session {session_id} after download.")
+                processor.cleanup()
+                remove_session_data(session_id)
+            except Exception as e:
+                logger.error(f"Error during post-download cleanup for session {session_id}: {e}", exc_info=True)
+            return response
+
     logger.info(f"Serving download for session {session_id} from {zip_path}.")
     return send_file(zip_path, as_attachment=True, download_name=os.path.basename(zip_path))
 
