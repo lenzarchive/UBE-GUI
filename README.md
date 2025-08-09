@@ -100,7 +100,7 @@ CLI Version: [Click](https://github.com/lenzarchive/unitybundleextractor)
 
 ## Credit
 
-Thanks for using this script!
+Thanks for using this project!
 Credit: [@alwizba](https://github.com/lenzarchive)
 
 ## License
